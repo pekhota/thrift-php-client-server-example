@@ -1,0 +1,28 @@
+version: "3"
+services:
+  app:
+    image: php:8.0.10-fpm-alpine3.13
+    volumes:
+      - ./:/var/www/
+      - ./public:/var/www/html
+  nginx:
+    image: nginx:1.21.1-alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./public:/var/www/html
+      - ./docker/nginx/site.conf:/etc/nginx/conf.d/default.conf
+    links:
+      - app
+  thrift:
+    build: ./docker/thrift
+    volumes:
+      - ./:/app
+  go-client:
+    build: ./clients/go-client
+    volumes:
+      - ./clients/go-client:/build
+    links:
+      - nginx
+
+
